@@ -1,5 +1,6 @@
 package com.mike.redirect.service;
 
+import com.mike.redirect.exception.LinkNotFoundException;
 import com.mike.redirect.model.Click;
 import com.mike.redirect.model.Link;
 import com.mike.redirect.repository.ClickRepository;
@@ -22,7 +23,7 @@ public class RedirectService {
 
     public Link processRedirect(String code, HttpServletRequest request) {
         Link link = linkRepository.findByCode(code)
-                .orElseThrow(() -> new RuntimeException("Link not found"));
+                .orElseThrow(() -> new LinkNotFoundException(code));
 
         Click click = new Click();
 
