@@ -1,5 +1,6 @@
 package com.mike.redirect.controller;
 
+import jakarta.validation.Valid;
 import com.mike.redirect.dto.CreateLinkRequest;
 import com.mike.redirect.dto.CreateLinkResponse;
 import com.mike.redirect.model.Link;
@@ -17,7 +18,7 @@ public class LinkController {
     }
 
     @PostMapping
-    public CreateLinkResponse createLink(@RequestBody CreateLinkRequest request) {
+    public CreateLinkResponse createLink(@Valid @RequestBody CreateLinkRequest request) {
 
         Link link = linkService.createLink(request.getDestinationUrl());
 
