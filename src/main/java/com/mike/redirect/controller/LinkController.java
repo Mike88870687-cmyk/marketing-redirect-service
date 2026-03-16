@@ -1,5 +1,8 @@
 package com.mike.redirect.controller;
 
+import com.mike.redirect.dto.LinksStatsResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import com.mike.redirect.dto.CreateLinkRequest;
 import com.mike.redirect.dto.CreateLinkResponse;
@@ -26,5 +29,17 @@ public class LinkController {
                 .code(link.getCode())
                 .destinationUrl(link.getDestinationUrl())
                 .build();
+    }
+
+    @Operation(summary = "Get statistics for a short link")
+    @ApiResponse(responseCode = "200", description = "Statistics returned")
+    @ApiResponse(responseCode = "404", description = "Link not found")
+
+    @GetMapping("/{code}/stats")
+    public LinksStatsResponse getStats(@PathVariable String code) {
+
+        long clicks = linkService.getClicksCount(code);
+
+        return new LinksStatsResponse(code, clicks);
     }
 }
