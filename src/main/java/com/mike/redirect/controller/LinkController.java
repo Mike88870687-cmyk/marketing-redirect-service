@@ -1,6 +1,6 @@
 package com.mike.redirect.controller;
 
-import com.mike.redirect.dto.LinksStatsResponse;
+import com.mike.redirect.dto.LinkResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -9,6 +9,8 @@ import com.mike.redirect.dto.CreateLinkResponse;
 import com.mike.redirect.model.Link;
 import com.mike.redirect.service.LinkService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/links")
@@ -31,15 +33,12 @@ public class LinkController {
                 .build();
     }
 
-    @Operation(summary = "Get statistics for a short link")
-    @ApiResponse(responseCode = "200", description = "Statistics returned")
+    @Operation(summary = "Get all short links")
+    @ApiResponse(responseCode = "200", description = "List of links returned")
     @ApiResponse(responseCode = "404", description = "Link not found")
 
-    @GetMapping("/{code}/stats")
-    public LinksStatsResponse getStats(@PathVariable String code) {
-
-        long clicks = linkService.getClicksCount(code);
-
-        return new LinksStatsResponse(code, clicks);
+    @GetMapping
+    public List<LinkResponse> getAllLinks() {
+        return linkService.getAllLinks();
     }
 }

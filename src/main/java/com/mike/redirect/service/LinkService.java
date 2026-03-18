@@ -1,5 +1,6 @@
 package com.mike.redirect.service;
 
+import com.mike.redirect.dto.LinkResponse;
 import com.mike.redirect.exception.LinkNotFoundException;
 import com.mike.redirect.model.Link;
 import com.mike.redirect.repository.ClickRepository;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.List;
 
 @Service
 public class LinkService {
@@ -41,5 +43,16 @@ public class LinkService {
                 .orElseThrow(() -> new LinkNotFoundException(code));
 
         return clickRepository.countByLink(link);
+    }
+
+    public List<LinkResponse> getAllLinks() {
+
+        return linkRepository.findAll()
+                .stream()
+                .map(link -> new LinkResponse(
+                        link.getCode(),
+                        link.getDestinationUrl()
+                ))
+                .toList();
     }
 }
