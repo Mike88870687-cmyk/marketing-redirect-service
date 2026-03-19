@@ -8,6 +8,13 @@ import lombok.Getter;
 public class CreateLinkResponse {
 
     private String code;
-    private String destinationUrl;
+
+    public CreateLinkResponse(String code) {
+        this.code = code;
+    }
+
+    public String getCode() {
+        return code;
+    }
 
 }

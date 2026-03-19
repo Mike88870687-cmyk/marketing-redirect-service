@@ -1,13 +1,15 @@
 package com.mike.redirect.service;
 
+import com.mike.redirect.dto.CreateLinkRequest;
+import com.mike.redirect.dto.CreateLinkResponse;
 import com.mike.redirect.dto.LinkResponse;
 import com.mike.redirect.exception.LinkNotFoundException;
 import com.mike.redirect.model.Link;
 import com.mike.redirect.repository.ClickRepository;
 import com.mike.redirect.repository.LinkRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.List;
 
@@ -22,19 +24,19 @@ public class LinkService {
         this.clickRepository = clickRepository;
     }
 
-    public Link createLink(String destinationUrl) {
+    public CreateLinkResponse createLink(@Valid CreateLinkRequest request) {
 
         String code = UUID.randomUUID()
                 .toString()
                 .substring(0, 6);
-
         Link link = new Link();
 
         link.setCode(code);
-        link.setDestinationUrl(destinationUrl);
-        link.setCreatedAt(LocalDateTime.now());
+        link.setDestinationUrl(request.getDestinationUrl());
 
-        return linkRepository.save(link);
+        linkRepository.save(link);
+
+        return new CreateLinkResponse(code);
     }
 
     public long getClicksCount(String code) {
@@ -54,5 +56,16 @@ public class LinkService {
                         link.getDestinationUrl()
                 ))
                 .toList();
+    }
+
+    public LinkResponse getLinkByCode(String code) {
+
+        Link link = linkRepository.findByCode(code)
+                .orElseThrow(() -> new LinkNotFoundException(code));
+
+        return new LinkResponse(
+                link.getCode(),
+                link.getDestinationUrl()
+        );
     }
 }

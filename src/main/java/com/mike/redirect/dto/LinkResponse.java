@@ -11,6 +11,7 @@ public class LinkResponse {
     }
 
     public String getCode() {
+
         return code;
     }
 
