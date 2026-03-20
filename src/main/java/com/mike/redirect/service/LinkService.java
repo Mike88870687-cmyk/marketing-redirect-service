@@ -2,6 +2,7 @@ package com.mike.redirect.service;
 
 import com.mike.redirect.dto.CreateLinkRequest;
 import com.mike.redirect.dto.CreateLinkResponse;
+import com.mike.redirect.dto.DailyStatsResponse;
 import com.mike.redirect.dto.LinkResponse;
 import com.mike.redirect.exception.LinkNotFoundException;
 import com.mike.redirect.model.Link;
@@ -29,8 +30,8 @@ public class LinkService {
         String code = UUID.randomUUID()
                 .toString()
                 .substring(0, 6);
-        Link link = new Link();
 
+        Link link = new Link();
         link.setCode(code);
         link.setDestinationUrl(request.getDestinationUrl());
 
@@ -67,5 +68,24 @@ public class LinkService {
                 link.getCode(),
                 link.getDestinationUrl()
         );
+    }
+
+    public void deleteByCode(String code) {
+        Link link = linkRepository.findByCode(code)
+                .orElseThrow(()-> new LinkNotFoundException(code));
+
+        linkRepository.delete(link);
+    }
+
+    public List<DailyStatsResponse> getDailyStats(String code) {
+
+        List<Object[]> results = clickRepository.getDailyStats(code);
+
+        return results.stream()
+                .map(r -> new DailyStatsResponse(
+                        r[0].toString(),
+                        (Long) r[1]
+                ))
+                .toList();
     }
 }

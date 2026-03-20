@@ -1,14 +1,11 @@
 package com.mike.redirect.controller;
 
-import com.mike.redirect.dto.LinkResponse;
-import com.mike.redirect.dto.LinksStatsResponse;
+import com.mike.redirect.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-import com.mike.redirect.dto.CreateLinkRequest;
-import com.mike.redirect.dto.CreateLinkResponse;
 import com.mike.redirect.service.LinkService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,7 +26,7 @@ public class LinkController {
     @ApiResponse(responseCode = "400", description = "Invalid request")
 
     @PostMapping
-    public CreateLinkResponse createLink(@Valid @RequestBody CreateLinkRequest request) {
+    public CreateLinkResponse createLink(@RequestBody CreateLinkRequest request) {
         return linkService.createLink(request);
     }
 
@@ -61,5 +58,22 @@ public class LinkController {
     public LinksStatsResponse getStats(@PathVariable String code) {
         long clicks = linkService.getClicksCount(code);
         return new LinksStatsResponse(code, clicks);
+    }
+
+    //delete link
+    @Operation(summary = "Delete link by code")
+    @ApiResponse(responseCode = "200", description = "Link delete")
+    @ApiResponse(responseCode = "404", description = "Link not found")
+
+    @DeleteMapping("/{code}")
+    public ResponseEntity<Void> deleteLink(@PathVariable String code) {
+        linkService.deleteByCode(code);
+        return ResponseEntity.noContent()
+                .build();
+    }
+
+    @GetMapping("/{code}/daily-stats")
+    public List<DailyStatsResponse> getDailyStats(@PathVariable String code) {
+        return linkService.getDailyStats(code);
     }
 }
