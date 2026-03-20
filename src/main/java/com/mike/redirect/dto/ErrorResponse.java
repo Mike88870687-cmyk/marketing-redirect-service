@@ -23,7 +23,7 @@ public class ErrorResponse {
         return status;
     }
 
-    public String getMessage() {
-        return getMessage();
+    public List<String> getErrors() {
+        return errors;
     }
 }
