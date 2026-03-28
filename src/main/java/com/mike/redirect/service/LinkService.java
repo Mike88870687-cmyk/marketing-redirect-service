@@ -5,12 +5,14 @@ import com.mike.redirect.dto.CreateLinkResponse;
 import com.mike.redirect.dto.DailyStatsResponse;
 import com.mike.redirect.dto.LinkResponse;
 import com.mike.redirect.exception.LinkNotFoundException;
+import com.mike.redirect.model.Click;
 import com.mike.redirect.model.Link;
 import com.mike.redirect.repository.ClickRepository;
 import com.mike.redirect.repository.LinkRepository;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.List;
 
@@ -87,5 +89,17 @@ public class LinkService {
                         (Long) r[1]
                 ))
                 .toList();
+    }
+
+    public void trackClick(String code) {
+
+        Link link = linkRepository.findByCode(code)
+                .orElseThrow(() -> new LinkNotFoundException(code));
+
+        Click click = new Click();
+        click.setLink(link);
+        click.setTimestamp(LocalDateTime.now());
+
+        clickRepository.save(click);
     }
 }
